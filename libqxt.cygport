@@ -1,0 +1,33 @@
+inherit qt4-qmake
+
+NAME="libqxt"
+VERSION=0.6.2
+RELEASE=1
+CATEGORY="Libs"
+SUMMARY="Qt extension library"
+DESCRIPTION="LibQxt is an extension library for Qt providing a suite of cross-
+platform utility classes to add functionality not readily available in the Qt
+toolkit."
+HOMEPAGE="http://libqxt.org/"
+#SRC_URI="http://dev.libqxt.org/libqxt/get/v${VERSION}.tar.bz2"
+SRC_URI="libqxt-${VERSION}.tar.bz2"
+SRC_DIR="libqxt-libqxt-dadc327c2a6a"
+PATCH_URI="0.6.2-cygwin.patch"
+
+PKG_NAMES="libQxt0 libQxt-devel"
+libQxt0_CONTENTS="usr/bin/cygQxt*-0.dll usr/share/doc/libqxt/"
+libQxt_devel_REQUIRES="libdb-devel libdns_sd-devel libQtGui4-devel libQtNetwork4-devel libQtSql4-devel"
+libQxt_devel_CONTENTS="${QT4_INCLUDEDIR#/}/Qxt* usr/lib/libQxt*.dll.a
+	${QT4_PLUGINSDIR#/}/designer/ ${QT4_DATADIR#/}/mkspecs/features/qxt*.prf"
+
+src_compile() {
+	cd ${B}
+	# avahi: no need for both libavahi-client and libdns_sd on Cygwin
+	${S}/configure \
+		-prefix /usr \
+		-headerdir ${QT4_INCLUDEDIR} \
+		-qmake-bin ${QT4_QMAKE} \
+		-no-avahi
+	cygqmake4 ${S}/libqxt.pro
+	cygmake
+}

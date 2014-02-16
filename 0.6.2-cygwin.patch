@@ -1,0 +1,28 @@
+--- origsrc/libqxt-libqxt-dadc327c2a6a/config.tests/xrandr/xrandr.pro	2011-11-24 16:10:32.000000000 -0600
++++ src/libqxt-libqxt-dadc327c2a6a/config.tests/xrandr/xrandr.pro	2014-02-16 14:24:48.205249200 -0600
+@@ -4,4 +4,4 @@ TARGET =
+ DEPENDPATH += .
+ INCLUDEPATH += .
+ SOURCES += main.cpp
+-!win32:LIBS+=-lXrandr
++!win32:LIBS+=-lXrandr $$QMAKE_LIBS_X11
+--- origsrc/libqxt-libqxt-dadc327c2a6a/src/core/qxtserialdevice_unix.cpp	2011-11-24 16:10:32.000000000 -0600
++++ src/libqxt-libqxt-dadc327c2a6a/src/core/qxtserialdevice_unix.cpp	2014-02-16 14:22:57.938942300 -0600
+@@ -35,6 +35,9 @@
+ // definition of FIONREAD
+ #include <sys/filio.h>
+ #endif
++#ifdef Q_OS_CYGWIN
++#define FIONREAD TIOCINQ
++#endif
+ 
+ qint64 QxtSerialDevicePrivate::deviceBuffer() const {
+     int bytes;
+--- origsrc/libqxt-libqxt-dadc327c2a6a/src/gui/gui.pro	2011-11-24 16:10:32.000000000 -0600
++++ src/libqxt-libqxt-dadc327c2a6a/src/gui/gui.pro	2014-02-16 14:33:07.607813400 -0600
+@@ -17,4 +17,4 @@ macx:LIBS       += -framework Carbon
+ # means that each library must explicitly link to all dependencies 
+ # than assuming that the application or another library will bring
+ # in the necessary symbols at run time.
+-contains(QMAKE_LFLAGS, "-Wl,--no-undefined"):LIBS += $${QMAKE_LIBS_X11}
++unix:!mac:LIBS += $${QMAKE_LIBS_X11}
